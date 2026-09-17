@@ -1,0 +1,1 @@
+Formatting '/home/student/Desktop/Capstone/capstone/untitled/project-files/qemu/aba07e3e-4273-45ff-b18d-dad1ec184ca1/hda_disk.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=3758096384 backing_file=/home/student/GNS3/images/QEMU/ubuntu-24.04-server-cloudimg-amd64.img backing_fmt=qcow2 lazy_refcounts=off refcount_bits=16
