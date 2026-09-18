@@ -476,7 +476,7 @@ resource "aws_network_acl_rule" "app_in_from_web" {
   egress         = false
   protocol       = "-1"
   rule_action    = "allow"
-  cidr_block     = data.aws_subnet.public[local.web_subnet_id].cidr_block
+  cidr_block     = data.aws_subnet.web.cidr_block
   from_port      = 0
   to_port        = 0
 }
