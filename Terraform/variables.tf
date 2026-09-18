@@ -67,13 +67,13 @@ variable "db_az" {
 variable "app_subnet_cidr" {
   description = "CIDR for the new private app subnet"
   type        = string
-  default     = "172.31.101.0/24"
+  default     = "10.2.20.0/24"
 }
 
 variable "db_subnet_cidr" {
   description = "CIDR for the new private db subnet"
   type        = string
-  default     = "172.31.102.0/24"
+  default     = "10.2.30.0/24"
 }
 
 ############################################
