@@ -21,13 +21,18 @@ variable "project" {
 variable "vpc_id" {
   description = "Existing VPC ID provided by the lab"
   type        = string
-  default     = "vpc-0e1f0d15acc7bdcb5"
+  default     = "vpc-048612df325ce3e29"
 }
 
 variable "public_subnet_ids" {
   description = "Existing public subnet IDs provided by the lab (one will be used for the web server, based on AZ)"
   type        = list(string)
-  default     = ["subnet-078cba6041ceee46d", "subnet-01d988fa6f53c4028"]
+  default     =  default = [
+    "subnet-035d4e36a69985386",
+    "subnet-0610d7f45fda55375",
+    "subnet-0bafe2f6803bdd531",
+    "subnet-09e47bbbcc1ee859c"
+  ]
 }
 
 ############################################
@@ -64,13 +69,13 @@ variable "db_az" {
 variable "app_subnet_cidr" {
   description = "CIDR for the new private app subnet"
   type        = string
-  default     = "10.20.2.0/24"
+  default     = "172.31.101.0/24"
 }
 
 variable "db_subnet_cidr" {
   description = "CIDR for the new private db subnet"
   type        = string
-  default     = "10.20.3.0/24"
+  default     = "172.31.102.0/24"
 }
 
 ############################################
