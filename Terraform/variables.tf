@@ -21,17 +21,15 @@ variable "project" {
 variable "vpc_id" {
   description = "Existing VPC ID provided by the lab"
   type        = string
-  default     = "vpc-048612df325ce3e29"
+  default     = "vpc-01830a638811838bb"
 }
 
 variable "public_subnet_ids" {
   description = "Existing public subnet IDs provided by the lab (one will be used for the web server, based on AZ)"
   type        = list(string)
-  default     = [
-    "subnet-035d4e36a69985386",
-    "subnet-0610d7f45fda55375",
-    "subnet-0bafe2f6803bdd531",
-    "subnet-09e47bbbcc1ee859c"
+  default = [
+    "subnet-04f02d1cc06ba82f5",
+    "subnet-03b24fcb63fde601"
   ]
 }
 
