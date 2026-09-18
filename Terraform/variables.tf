@@ -28,9 +28,9 @@ variable "public_subnet_ids" {
   description = "Existing public subnet IDs provided by the lab (one will be used for the web server, based on AZ)"
   type        = list(string)
   default = [
-    "subnet-04f02d1cc06ba82f5",
-    "subnet-03b24fcb63fde601"
-  ]
+  "subnet-04f02d1cc06ba82f5",
+  "subnet-03b24fcb63fde6014"
+]
 }
 
 ############################################
