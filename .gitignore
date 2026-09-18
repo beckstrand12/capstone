@@ -20,3 +20,9 @@
 
 # GNS3 project temporary folders
 *.gns3project
+
+# Terraform generated files
+Terraform/.terraform/
+Terraform/*.tfstate
+Terraform/*.tfstate.*
+Terraform/.terraform.lock.hcl
