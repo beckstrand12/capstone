@@ -1,1 +1,22 @@
-**/*.qcow2
+# GNS3 runtime/generated files
+*.lock
+*.log
+
+# Virtual machine disk images
+*.qcow2
+*.qcow
+*.img
+*.vmdk
+*.vdi
+*.raw
+
+# VM state/snapshots
+*.sav
+*.mem
+
+# Temporary files
+*.tmp
+*.swp
+
+# GNS3 project temporary folders
+*.gns3project

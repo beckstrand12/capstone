@@ -1,5 +1,0 @@
-Start QEMU with /usr/bin/qemu-system-x86_64 -name WebServer -m 1024M -smp cpus=1,sockets=1 -enable-kvm -machine smm=off -boot order=c -cdrom /home/student/GNS3/images/QEMU/ubuntu-cloud-init-data.iso -drive file=/home/student/Desktop/Capstone/capstone/untitled/project-files/qemu/aba07e3e-4273-45ff-b18d-dad1ec184ca1/hda_disk.qcow2,if=virtio,index=0,media=disk,id=drive0 -uuid aba07e3e-4273-45ff-b18d-dad1ec184ca1 -serial telnet:127.0.0.1:5007,server,nowait -monitor tcp:127.0.0.1:39739,server,nowait -net none -device virtio-net-pci,mac=0c:a0:7e:3e:00:00,speed=10000,duplex=full,netdev=gns3-0 -netdev socket,id=gns3-0,udp=127.0.0.1:10041,localaddr=127.0.0.1:10040 -nographic
-
-Execution log:
-qemu-system-x86_64: warning: host doesn't support requested feature: CPUID.80000001H:ECX.svm [bit 2]
-qemu-system-x86_64: terminating on signal 15 from pid 3934 (/usr/share/gns3/gns3-server/bin/python)
