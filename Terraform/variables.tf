@@ -27,7 +27,7 @@ variable "vpc_id" {
 variable "public_subnet_ids" {
   description = "Existing public subnet IDs provided by the lab (one will be used for the web server, based on AZ)"
   type        = list(string)
-  default     =  default = [
+  default     = [
     "subnet-035d4e36a69985386",
     "subnet-0610d7f45fda55375",
     "subnet-0bafe2f6803bdd531",
@@ -103,7 +103,6 @@ variable "on_prem_blocked_host" {
 variable "customer_gateway_ip" {
   description = "Public/reachable IP of the on-prem customer gateway"
   type        = string
-  default     = "10.1.0.5"
 }
 
 variable "customer_gateway_bgp_asn" {
