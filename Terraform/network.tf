@@ -6,17 +6,25 @@ data "aws_vpc" "main" {
   id = var.vpc_id
 }
 
-data "aws_subnet" "public" {
-  for_each = toset(var.public_subnet_ids)
-  id       = each.value
+data "aws_subnet" "web" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.main.id]
+  }
+
+  filter {
+    name   = "tag:Zone"
+    values = ["Public"]
+  }
+
+  filter {
+    name   = "tag:Name"
+    values = [var.web_subnet_name]
+  }
 }
 
-# Pick whichever of the two existing public subnets sits in web_az.
-# This avoids hardcoding which subnet ID maps to which AZ.
 locals {
-  web_subnet_id = [
-    for s in data.aws_subnet.public : s.id if s.availability_zone == var.web_az
-  ][0]
+  web_subnet_id = data.aws_subnet.web.id
 }
 
 ############################################

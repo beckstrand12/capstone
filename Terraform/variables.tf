@@ -24,24 +24,15 @@ variable "vpc_id" {
   default     = "vpc-01830a638811838bb"
 }
 
-variable "public_subnet_ids" {
-  description = "Existing public subnet IDs provided by the lab (one will be used for the web server, based on AZ)"
-  type        = list(string)
-  default = [
-  "subnet-04f02d1cc06ba82f5",
-  "subnet-03b24fcb63fde6014"
-]
+variable "web_subnet_name" {
+  description = "Name tag of the existing public subnet used by the web server"
+  type        = string
+  default     = "Subnet-01"
 }
 
 ############################################
 # AZ placement - single-AZ per tier, no HA
 ############################################
-
-variable "web_az" {
-  description = "AZ for the public web server (must match one of the existing public subnets)"
-  type        = string
-  default     = "us-west-2a"
-}
 
 variable "app_az" {
   description = "AZ for the private app server"
