@@ -83,21 +83,33 @@ variable "db_subnet_cidr" {
 ############################################
 
 variable "on_prem_cidr" {
-  description = "Full on-prem supernet, routed to over the VPN (into app + db route tables only, never the public one)"
+  description = "Full on-prem supernet routed over the VPN"
   type        = string
   default     = "10.10.0.0/16"
 }
 
-variable "on_prem_full_access_cidr" {
-  description = "On-prem subnet allowed to reach the app and db servers directly, but explicitly blocked from web"
+variable "on_prem_it_cidr" {
+  description = "On-prem IT network with full access to AWS resources"
+  type        = string
+  default     = "10.10.10.0/24"
+}
+
+variable "on_prem_production_cidr" {
+  description = "On-prem Production network with restricted access to the AWS App EC2"
+  type        = string
+  default     = "10.10.20.0/24"
+}
+
+variable "on_prem_servers_cidr" {
+  description = "On-prem Servers network with restricted access to the AWS DB EC2"
   type        = string
   default     = "10.10.30.0/24"
 }
 
-variable "on_prem_blocked_host" {
-  description = "Single on-prem host explicitly blocked from reaching the web server"
+variable "on_prem_dmz_cidr" {
+  description = "On-prem DMZ network with no access to AWS resources"
   type        = string
-  default     = "10.10.20.201/32"
+  default     = "10.10.99.0/24"
 }
 
 variable "customer_gateway_ip" {
