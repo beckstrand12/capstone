@@ -1,7 +1,4 @@
-############################################
 # AMI lookup - Amazon Linux 2023
-############################################
-
 data "aws_ami" "al2023" {
   most_recent = true
   owners      = ["amazon"]
@@ -17,9 +14,8 @@ data "aws_ami" "al2023" {
   }
 }
 
-############################################
-# Web server - public subnet, us-west-2a, Elastic IP
-############################################
+
+# Web server - public subnet =========================================
 
 resource "aws_instance" "web" {
   ami                         = data.aws_ami.al2023.id
@@ -55,9 +51,8 @@ resource "aws_eip" "web" {
   }
 }
 
-############################################
-# App server - private subnet, us-west-2b, no public IP
-############################################
+
+# App server - private subnet ========================================
 
 resource "aws_instance" "app" {
   ami                    = data.aws_ami.al2023.id
@@ -83,9 +78,8 @@ resource "aws_instance" "app" {
   }
 }
 
-############################################
-# DB server - private subnet, us-west-2c, no public IP
-############################################
+
+# DB server - private subnet ====================================
 
 resource "aws_instance" "db" {
   ami                    = data.aws_ami.al2023.id

@@ -1,7 +1,4 @@
-############################################
-# General
-############################################
-
+# Genearl
 variable "aws_region" {
   description = "AWS region - lab requires us-west-2"
   type        = string
@@ -14,9 +11,8 @@ variable "project" {
   default     = "myapp"
 }
 
-############################################
-# Pre-existing resources (created for you by the lab - do not recreate)
-############################################
+
+# Pre-existing resources =============================
 
 variable "vpc_id" {
   description = "Existing VPC ID provided by the lab"
@@ -29,9 +25,8 @@ variable "web_subnet_name" {
   default     = "Subnet-01"
 }
 
-############################################
-# AZ placement - single-AZ per tier, no HA
-############################################
+
+# AZ placement ========================================
 
 variable "app_az" {
   description = "AZ for the private app server"
@@ -45,15 +40,6 @@ variable "db_az" {
   default     = "us-west-2c"
 }
 
-############################################
-# New private subnets we create in the existing VPC
-# NOTE: these CIDRs must fall inside the existing VPC's CIDR block
-# and must not overlap the two existing public subnets.
-# Run: aws ec2 describe-vpcs --vpc-ids vpc-0e1f0d15acc7bdcb5
-# and: aws ec2 describe-subnets --filters Name=vpc-id,Values=vpc-0e1f0d15acc7bdcb5
-# to confirm before applying, then adjust these defaults if needed.
-############################################
-
 variable "app_subnet_cidr" {
   description = "CIDR for the new private app subnet"
   type        = string
@@ -66,9 +52,8 @@ variable "db_subnet_cidr" {
   default     = "10.2.40.0/24"
 }
 
-############################################
-# On-prem / VPN
-############################################
+
+# On-prem / VPN ========================================
 
 variable "on_prem_cidr" {
   description = "Full on-prem supernet routed over the VPN"
@@ -111,9 +96,8 @@ variable "customer_gateway_bgp_asn" {
   default     = 65000
 }
 
-############################################
-# Compute
-############################################
+
+# Compute ===============================
 
 variable "key_name" {
   description = "Lab-provided EC2 key pair name (find with: aws ec2 describe-key-pairs --query \"KeyPairs[*].KeyName\" --output text)"
