@@ -21,7 +21,6 @@ variable "project" {
 variable "vpc_id" {
   description = "Existing VPC ID provided by the lab"
   type        = string
-  default     = "vpc-01830a638811838bb"
 }
 
 variable "web_subnet_name" {
