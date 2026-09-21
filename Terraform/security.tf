@@ -1,4 +1,5 @@
 # SECURITY GROUPS ============================================================
+
 resource "aws_security_group" "web" {
   name        = "${var.project}-web-sg"
   description = "Public web tier"
@@ -39,13 +40,15 @@ resource "aws_security_group" "web" {
     cidr_blocks = [var.on_prem_it_cidr]
   }
 
-  # ICMP testing
+  # ICMP testing from App subnet
+  # Uses CIDR instead of referencing the App security group
+  # to avoid a circular Web <-> App dependency.
   ingress {
-    description     = "ICMP from App"
-    protocol        = "icmp"
-    from_port       = -1
-    to_port         = -1
-    security_groups = [aws_security_group.app.id]
+    description = "ICMP from App subnet"
+    protocol    = "icmp"
+    from_port   = -1
+    to_port     = -1
+    cidr_blocks = [var.app_subnet_cidr]
   }
 
   egress {
@@ -83,12 +86,14 @@ resource "aws_security_group" "app" {
     security_groups = [aws_security_group.web.id]
   }
 
+  # ICMP testing from Web subnet
+  # Uses CIDR instead of referencing the Web security group.
   ingress {
-    description     = "ICMP from Web"
-    protocol        = "icmp"
-    from_port       = -1
-    to_port          = -1
-    security_groups = [aws_security_group.web.id]
+    description = "ICMP from Web subnet"
+    protocol    = "icmp"
+    from_port   = -1
+    to_port     = -1
+    cidr_blocks = [data.aws_subnet.web.cidr_block]
   }
 
   # IT to App
@@ -129,8 +134,8 @@ resource "aws_security_group" "db" {
   # App to DB
   ingress {
     description     = "PostgreSQL from App"
-    from_port       = 5432
-    to_port         = 5432
+    from_port       = var.db_port
+    to_port         = var.db_port
     protocol        = "tcp"
     security_groups = [aws_security_group.app.id]
   }
@@ -146,8 +151,8 @@ resource "aws_security_group" "db" {
   # IT to DB
   ingress {
     description = "PostgreSQL from on-prem IT"
-    from_port   = 5432
-    to_port     = 5432
+    from_port   = var.db_port
+    to_port     = var.db_port
     protocol    = "tcp"
     cidr_blocks = [var.on_prem_it_cidr]
   }
@@ -202,13 +207,13 @@ resource "aws_network_acl" "web" {
   }
 
   ingress {
-  rule_no    = 125
-  protocol   = "tcp"
-  action     = "allow"
-  cidr_block = var.on_prem_it_cidr
-  from_port  = 22
-  to_port    = 22
-}
+    rule_no    = 125
+    protocol   = "tcp"
+    action     = "allow"
+    cidr_block = var.on_prem_it_cidr
+    from_port  = 22
+    to_port    = 22
+  }
 
   ingress {
     rule_no    = 130
@@ -292,8 +297,8 @@ resource "aws_network_acl" "db" {
     protocol   = "tcp"
     action     = "allow"
     cidr_block = var.app_subnet_cidr
-    from_port  = 5432
-    to_port    = 5432
+    from_port  = var.db_port
+    to_port    = var.db_port
   }
 
   ingress {
