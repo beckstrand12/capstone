@@ -1,10 +1,7 @@
 # Virtual Private Gateway
 resource "aws_vpn_gateway" "main" {
   vpc_id = data.aws_vpc.main.id
-
-  tags = {
-    Name = "${var.project}-vgw"
-  }
+  tags = { Name = "${var.project}-vgw" }
 }
 
 # Customer Gateway
@@ -12,40 +9,38 @@ resource "aws_customer_gateway" "on_prem" {
   bgp_asn    = var.customer_gateway_bgp_asn
   ip_address = var.customer_gateway_ip
   type       = "ipsec.1"
-
-  tags = {
-    Name = "${var.project}-cgw-on-prem"
-  }
+  tags = { Name = "${var.project}-cgw-on-prem" }
 }
 
-# VPN Connection - static
+# VPN Connection - static routing
 resource "aws_vpn_connection" "main" {
   vpn_gateway_id      = aws_vpn_gateway.main.id
   customer_gateway_id = aws_customer_gateway.on_prem.id
   type                = "ipsec.1"
   static_routes_only  = true
-
-  tags = {
-    Name = "${var.project}-vpn-connection"
-  }
+  tags = { Name = "${var.project}-vpn-connection" }
 }
 
+# Only the IT subnet is reachable from AWS through the VPN
 resource "aws_vpn_connection_route" "on_prem" {
   vpn_connection_id      = aws_vpn_connection.main.id
-  destination_cidr_block = var.on_prem_cidr
+  destination_cidr_block = var.on_prem_it_cidr
 }
 
+# Propagate the VPN route into the private route table
 resource "aws_vpn_gateway_route_propagation" "private" {
   vpn_gateway_id = aws_vpn_gateway.main.id
   route_table_id = aws_route_table.private.id
 }
 
+# Existing public subnet
 data "aws_route_table" "web" {
   subnet_id = local.web_subnet_id
 }
 
+# Allow the AWS web subnet to reach only the IT subnet on-prem
 resource "aws_route" "web_to_on_prem" {
   route_table_id         = data.aws_route_table.web.id
-  destination_cidr_block = var.on_prem_cidr
+  destination_cidr_block = var.on_prem_it_cidr
   gateway_id             = aws_vpn_gateway.main.id
 }

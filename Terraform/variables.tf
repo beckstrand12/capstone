@@ -11,9 +11,7 @@ variable "project" {
   default     = "myapp"
 }
 
-
 # Pre-existing resources =============================
-
 variable "vpc_id" {
   description = "Existing VPC ID provided by the lab"
   type        = string
@@ -25,9 +23,7 @@ variable "web_subnet_name" {
   default     = "Subnet-01"
 }
 
-
 # AZ placement ========================================
-
 variable "app_az" {
   description = "AZ for the private app server"
   type        = string
@@ -52,9 +48,7 @@ variable "db_subnet_cidr" {
   default     = "10.2.40.0/24"
 }
 
-
 # On-prem / VPN ========================================
-
 variable "on_prem_cidr" {
   description = "Full on-prem supernet routed over the VPN"
   type        = string
@@ -96,9 +90,7 @@ variable "customer_gateway_bgp_asn" {
   default     = 65000
 }
 
-
 # Compute ===============================
-
 variable "key_name" {
   description = "Lab-provided EC2 key pair name (find with: aws ec2 describe-key-pairs --query \"KeyPairs[*].KeyName\" --output text)"
   type        = string
