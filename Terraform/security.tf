@@ -1,3 +1,4 @@
+```hcl
 # SECURITY GROUPS ============================================================
 
 resource "aws_security_group" "web" {
@@ -40,9 +41,16 @@ resource "aws_security_group" "web" {
     cidr_blocks = [var.on_prem_it_cidr]
   }
 
-  # ICMP testing from App subnet
-  # Uses CIDR instead of referencing the App security group
-  # to avoid a circular Web <-> App dependency.
+  # ICMP from on-prem IT
+  ingress {
+    description = "ICMP from on-prem IT"
+    protocol    = "icmp"
+    from_port   = -1
+    to_port     = -1
+    cidr_blocks = [var.on_prem_it_cidr]
+  }
+
+  # ICMP from App subnet
   ingress {
     description = "ICMP from App subnet"
     protocol    = "icmp"
@@ -64,12 +72,13 @@ resource "aws_security_group" "web" {
   }
 }
 
+
 resource "aws_security_group" "app" {
   name        = "${var.project}-app-sg"
   description = "Private application tier"
   vpc_id      = data.aws_vpc.main.id
 
-  # Web to App
+  # Web to App - application traffic
   ingress {
     description     = "Application traffic from Web"
     from_port       = var.app_port
@@ -78,6 +87,7 @@ resource "aws_security_group" "app" {
     security_groups = [aws_security_group.web.id]
   }
 
+  # Web to App - SSH
   ingress {
     description     = "SSH from Web"
     from_port       = 22
@@ -86,8 +96,7 @@ resource "aws_security_group" "app" {
     security_groups = [aws_security_group.web.id]
   }
 
-  # ICMP testing from Web subnet
-  # Uses CIDR instead of referencing the Web security group.
+  # Web to App - ICMP
   ingress {
     description = "ICMP from Web subnet"
     protocol    = "icmp"
@@ -96,7 +105,7 @@ resource "aws_security_group" "app" {
     cidr_blocks = [data.aws_subnet.web.cidr_block]
   }
 
-  # IT to App
+  # IT to App - application traffic
   ingress {
     description = "Application access from on-prem IT"
     from_port   = var.app_port
@@ -105,11 +114,21 @@ resource "aws_security_group" "app" {
     cidr_blocks = [var.on_prem_it_cidr]
   }
 
+  # IT to App - SSH
   ingress {
     description = "SSH from on-prem IT"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
+    cidr_blocks = [var.on_prem_it_cidr]
+  }
+
+  # IT to App - ICMP
+  ingress {
+    description = "ICMP from on-prem IT"
+    protocol    = "icmp"
+    from_port   = -1
+    to_port     = -1
     cidr_blocks = [var.on_prem_it_cidr]
   }
 
@@ -126,12 +145,13 @@ resource "aws_security_group" "app" {
   }
 }
 
+
 resource "aws_security_group" "db" {
   name        = "${var.project}-db-sg"
   description = "Private database tier"
   vpc_id      = data.aws_vpc.main.id
 
-  # App to DB
+  # App to DB - PostgreSQL
   ingress {
     description     = "PostgreSQL from App"
     from_port       = var.db_port
@@ -140,6 +160,7 @@ resource "aws_security_group" "db" {
     security_groups = [aws_security_group.app.id]
   }
 
+  # App to DB - ICMP
   ingress {
     description     = "ICMP from App"
     protocol        = "icmp"
@@ -148,7 +169,7 @@ resource "aws_security_group" "db" {
     security_groups = [aws_security_group.app.id]
   }
 
-  # IT to DB
+  # IT to DB - PostgreSQL
   ingress {
     description = "PostgreSQL from on-prem IT"
     from_port   = var.db_port
@@ -170,7 +191,9 @@ resource "aws_security_group" "db" {
   }
 }
 
+
 # WEB NACL ============================================================
+
 resource "aws_network_acl" "web" {
   vpc_id     = data.aws_vpc.main.id
   subnet_ids = [local.web_subnet_id]
@@ -179,6 +202,7 @@ resource "aws_network_acl" "web" {
     Name = "${var.project}-nacl-web"
   }
 
+  # HTTP from Internet
   ingress {
     rule_no    = 100
     protocol   = "tcp"
@@ -188,6 +212,7 @@ resource "aws_network_acl" "web" {
     to_port    = 80
   }
 
+  # HTTPS from Internet
   ingress {
     rule_no    = 110
     protocol   = "tcp"
@@ -197,6 +222,7 @@ resource "aws_network_acl" "web" {
     to_port    = 443
   }
 
+  # SSH from administrator
   ingress {
     rule_no    = 120
     protocol   = "tcp"
@@ -206,6 +232,7 @@ resource "aws_network_acl" "web" {
     to_port    = 22
   }
 
+  # SSH from on-prem IT
   ingress {
     rule_no    = 125
     protocol   = "tcp"
@@ -215,6 +242,17 @@ resource "aws_network_acl" "web" {
     to_port    = 22
   }
 
+  # ICMP from on-prem IT
+  ingress {
+    rule_no    = 127
+    protocol   = "icmp"
+    action     = "allow"
+    cidr_block = var.on_prem_it_cidr
+    from_port  = -1
+    to_port    = -1
+  }
+
+  # Ephemeral TCP ports for return traffic
   ingress {
     rule_no    = 130
     protocol   = "tcp"
@@ -232,7 +270,9 @@ resource "aws_network_acl" "web" {
   }
 }
 
+
 # APP NACL ============================================================
+
 resource "aws_network_acl" "app" {
   vpc_id     = data.aws_vpc.main.id
   subnet_ids = [aws_subnet.app.id]
@@ -241,6 +281,7 @@ resource "aws_network_acl" "app" {
     Name = "${var.project}-nacl-app"
   }
 
+  # Web to App - application traffic
   ingress {
     rule_no    = 100
     protocol   = "tcp"
@@ -250,6 +291,7 @@ resource "aws_network_acl" "app" {
     to_port    = var.app_port
   }
 
+  # Web to App - SSH
   ingress {
     rule_no    = 110
     protocol   = "tcp"
@@ -259,6 +301,17 @@ resource "aws_network_acl" "app" {
     to_port    = 22
   }
 
+  # Web to App - ICMP
+  ingress {
+    rule_no    = 115
+    protocol   = "icmp"
+    action     = "allow"
+    cidr_block = data.aws_subnet.web.cidr_block
+    from_port  = -1
+    to_port    = -1
+  }
+
+  # IT to App
   ingress {
     rule_no    = 120
     protocol   = "-1"
@@ -266,6 +319,7 @@ resource "aws_network_acl" "app" {
     cidr_block = var.on_prem_it_cidr
   }
 
+  # Ephemeral TCP ports for return traffic
   ingress {
     rule_no    = 130
     protocol   = "tcp"
@@ -283,7 +337,9 @@ resource "aws_network_acl" "app" {
   }
 }
 
+
 # DB NACL ============================================================
+
 resource "aws_network_acl" "db" {
   vpc_id     = data.aws_vpc.main.id
   subnet_ids = [aws_subnet.db.id]
@@ -292,6 +348,7 @@ resource "aws_network_acl" "db" {
     Name = "${var.project}-nacl-db"
   }
 
+  # App to DB - PostgreSQL
   ingress {
     rule_no    = 100
     protocol   = "tcp"
@@ -301,6 +358,17 @@ resource "aws_network_acl" "db" {
     to_port    = var.db_port
   }
 
+  # App to DB - ICMP
+  ingress {
+    rule_no    = 105
+    protocol   = "icmp"
+    action     = "allow"
+    cidr_block = var.app_subnet_cidr
+    from_port  = -1
+    to_port    = -1
+  }
+
+  # IT to DB
   ingress {
     rule_no    = 110
     protocol   = "-1"
@@ -308,6 +376,7 @@ resource "aws_network_acl" "db" {
     cidr_block = var.on_prem_it_cidr
   }
 
+  # Ephemeral TCP ports for return traffic
   ingress {
     rule_no    = 120
     protocol   = "tcp"
