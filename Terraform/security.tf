@@ -168,14 +168,10 @@ resource "aws_security_group" "db" {
     security_groups = [aws_security_group.app.id]
   }
 
-  # IT to DB - PostgreSQL
-  ingress {
-    description = "PostgreSQL from on-prem IT"
-    from_port   = var.db_port
-    to_port     = var.db_port
-    protocol    = "tcp"
-    cidr_blocks = [var.on_prem_it_cidr]
-  }
+  # NOTE: "PostgreSQL from on-prem IT" rule removed.
+  # Per spec, Data tier accepts traffic exclusively from the App SG.
+  # Your hybrid routing only advertises IT (10.10.10.0/24) as far as
+  # APP-1 anyway, so on-prem IT was never supposed to reach the DB tier directly.
 
   egress {
     description = "All outbound"
@@ -251,6 +247,16 @@ resource "aws_network_acl" "web" {
     to_port    = -1
   }
 
+  # ICMP from App subnet (NEW — needed for WEB<->APP ping return traffic)
+  ingress {
+    rule_no    = 128
+    protocol   = "icmp"
+    action     = "allow"
+    cidr_block = var.app_subnet_cidr
+    from_port  = -1
+    to_port    = -1
+  }
+
   # Ephemeral TCP ports for return traffic
   ingress {
     rule_no    = 130
@@ -312,6 +318,16 @@ resource "aws_network_acl" "app" {
     to_port    = -1
   }
 
+  # DB to App - ICMP (NEW — needed for APP<->DATA ping return traffic)
+  ingress {
+    rule_no    = 116
+    protocol   = "icmp"
+    action     = "allow"
+    cidr_block = aws_subnet.db.cidr_block
+    from_port  = -1
+    to_port    = -1
+  }
+
   # IT to App
   ingress {
     rule_no    = 120
@@ -369,14 +385,6 @@ resource "aws_network_acl" "db" {
     cidr_block = var.app_subnet_cidr
     from_port  = -1
     to_port    = -1
-  }
-
-  # IT to DB
-  ingress {
-    rule_no    = 110
-    protocol   = "-1"
-    action     = "allow"
-    cidr_block = var.on_prem_it_cidr
   }
 
   # Ephemeral TCP ports for return traffic
