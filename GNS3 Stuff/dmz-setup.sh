@@ -1,0 +1,17 @@
+#!/bin/sh
+sudo tee /etc/netplan/50-cloud-init.yaml > /dev/null << 'EOF'
+network:
+  version: 2
+  ethernets:
+    ens3:
+      addresses:
+        - 10.10.99.101/24
+      routes:
+        - to: default
+          via: 10.10.99.1
+      nameservers:
+        addresses:
+          - 8.8.8.8
+          - 1.1.1.1
+EOF
+sudo netplan apply
