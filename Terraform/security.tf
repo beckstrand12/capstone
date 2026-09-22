@@ -243,18 +243,18 @@ resource "aws_network_acl" "web" {
     protocol   = "icmp"
     action     = "allow"
     cidr_block = var.on_prem_it_cidr
-    from_port  = -1
-    to_port    = -1
+    from_port  = 0
+    to_port    = 0
   }
 
-  # ICMP from App subnet (NEW — needed for WEB<->APP ping return traffic)
+  # ICMP from App subnet (needed for WEB<->APP ping return traffic)
   ingress {
     rule_no    = 128
     protocol   = "icmp"
     action     = "allow"
     cidr_block = var.app_subnet_cidr
-    from_port  = -1
-    to_port    = -1
+    from_port  = 0
+    to_port    = 0
   }
 
   # Ephemeral TCP ports for return traffic
@@ -314,26 +314,199 @@ resource "aws_network_acl" "app" {
     protocol   = "icmp"
     action     = "allow"
     cidr_block = data.aws_subnet.web.cidr_block
-    from_port  = -1
-    to_port    = -1
+    from_port  = 0
+    to_port    = 0
   }
 
-  # DB to App - ICMP (NEW — needed for APP<->DATA ping return traffic)
+  # DB to App - ICMP (needed for APP<->DATA ping return traffic)
   ingress {
     rule_no    = 116
     protocol   = "icmp"
     action     = "allow"
     cidr_block = aws_subnet.db.cidr_block
-    from_port  = -1
-    to_port    = -1
+    from_port  = 0
+    to_port    = 0
   }
 
-  # IT to App
+  # IT to App (all protocols)
   ingress {
     rule_no    = 120
     protocol   = "-1"
     action     = "allow"
     cidr_block = var.on_prem_it_cidr
+    from_port  = 0
+    to_port    = 0
+  }
+
+  # Ephemeral TCP ports for return traffic
+  ingress {
+    rule_no    = 130
+    protocol   = "tcp"
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 1024
+    to_port    = 65535
+  }
+
+  egress {
+    rule_no    = 100
+    protocol   = "-1"
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
+  }
+}
+
+# WEB NACL ============================================================
+
+resource "aws_network_acl" "web" {
+  vpc_id     = data.aws_vpc.main.id
+  subnet_ids = [local.web_subnet_id]
+
+  tags = {
+    Name = "${var.project}-nacl-web"
+  }
+
+  # HTTP from Internet
+  ingress {
+    rule_no    = 100
+    protocol   = "tcp"
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 80
+    to_port    = 80
+  }
+
+  # HTTPS from Internet
+  ingress {
+    rule_no    = 110
+    protocol   = "tcp"
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 443
+    to_port    = 443
+  }
+
+  # SSH from administrator
+  ingress {
+    rule_no    = 120
+    protocol   = "tcp"
+    action     = "allow"
+    cidr_block = var.admin_cidr
+    from_port  = 22
+    to_port    = 22
+  }
+
+  # SSH from on-prem IT
+  ingress {
+    rule_no    = 125
+    protocol   = "tcp"
+    action     = "allow"
+    cidr_block = var.on_prem_it_cidr
+    from_port  = 22
+    to_port    = 22
+  }
+
+  # ICMP from on-prem IT
+  ingress {
+    rule_no    = 127
+    protocol   = "icmp"
+    action     = "allow"
+    cidr_block = var.on_prem_it_cidr
+    from_port  = 0
+    to_port    = 0
+  }
+
+  # ICMP from App subnet (needed for WEB<->APP ping return traffic)
+  ingress {
+    rule_no    = 128
+    protocol   = "icmp"
+    action     = "allow"
+    cidr_block = var.app_subnet_cidr
+    from_port  = 0
+    to_port    = 0
+  }
+
+  # Ephemeral TCP ports for return traffic
+  ingress {
+    rule_no    = 130
+    protocol   = "tcp"
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 1024
+    to_port    = 65535
+  }
+
+  egress {
+    rule_no    = 100
+    protocol   = "-1"
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
+  }
+}
+
+
+# APP NACL ============================================================
+
+resource "aws_network_acl" "app" {
+  vpc_id     = data.aws_vpc.main.id
+  subnet_ids = [aws_subnet.app.id]
+
+  tags = {
+    Name = "${var.project}-nacl-app"
+  }
+
+  # Web to App - application traffic
+  ingress {
+    rule_no    = 100
+    protocol   = "tcp"
+    action     = "allow"
+    cidr_block = data.aws_subnet.web.cidr_block
+    from_port  = var.app_port
+    to_port    = var.app_port
+  }
+
+  # Web to App - SSH
+  ingress {
+    rule_no    = 110
+    protocol   = "tcp"
+    action     = "allow"
+    cidr_block = data.aws_subnet.web.cidr_block
+    from_port  = 22
+    to_port    = 22
+  }
+
+  # Web to App - ICMP
+  ingress {
+    rule_no    = 115
+    protocol   = "icmp"
+    action     = "allow"
+    cidr_block = data.aws_subnet.web.cidr_block
+    from_port  = 0
+    to_port    = 0
+  }
+
+  # DB to App - ICMP (needed for APP<->DATA ping return traffic)
+  ingress {
+    rule_no    = 116
+    protocol   = "icmp"
+    action     = "allow"
+    cidr_block = aws_subnet.db.cidr_block
+    from_port  = 0
+    to_port    = 0
+  }
+
+  # IT to App (all protocols)
+  ingress {
+    rule_no    = 120
+    protocol   = "-1"
+    action     = "allow"
+    cidr_block = var.on_prem_it_cidr
+    from_port  = 0
+    to_port    = 0
   }
 
   # Ephemeral TCP ports for return traffic
@@ -383,8 +556,8 @@ resource "aws_network_acl" "db" {
     protocol   = "icmp"
     action     = "allow"
     cidr_block = var.app_subnet_cidr
-    from_port  = -1
-    to_port    = -1
+    from_port  = 0
+    to_port    = 0
   }
 
   # Ephemeral TCP ports for return traffic
