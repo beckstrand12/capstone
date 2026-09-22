@@ -266,6 +266,8 @@ resource "aws_network_acl" "web" {
     protocol   = "-1"
     action     = "allow"
     cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
   }
 }
 
@@ -333,6 +335,8 @@ resource "aws_network_acl" "app" {
     protocol   = "-1"
     action     = "allow"
     cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
   }
 }
 
@@ -390,5 +394,7 @@ resource "aws_network_acl" "db" {
     protocol   = "-1"
     action     = "allow"
     cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
   }
 }
