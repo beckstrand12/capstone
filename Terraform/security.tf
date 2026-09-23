@@ -306,8 +306,8 @@ resource "aws_network_acl" "app" {
     protocol   = "icmp"
     action     = "allow"
     cidr_block = data.aws_subnet.web.cidr_block
-    from_port  = -1
-    to_port    = -1
+    from_port  = 0
+    to_port    = 0
   }
 
   # DB to App - ICMP (needed for APP<->DATA ping return traffic)
@@ -316,8 +316,8 @@ resource "aws_network_acl" "app" {
     protocol   = "icmp"
     action     = "allow"
     cidr_block = aws_subnet.db.cidr_block
-    from_port  = -1
-    to_port    = -1
+    from_port  = 0
+    to_port    = 0
   }
 
   # IT to App (all protocols)
