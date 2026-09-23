@@ -150,3 +150,19 @@ OVSDB JSON 272 981cb24c4c64ac78bed73b4e06dc5d3f852b65fb
 {"Port":{"9143b9e1-7b18-4e7c-9caf-eb0fd310d321":{"trunks":["set",[10,20,30]]}},"_date":1789746246300,"_is_diff":true,"_comment":"ovs-vsctl (invoked by bash): ovs-vsctl set port eth1 trunks=10,20,30","Open_vSwitch":{"074c070a-4cbe-45bb-ad1e-9cbe9f8446ab":{"next_cfg":32}}}
 OVSDB JSON 111 d9c87efb17f74f7ee6d834e85c69909fbf0af2d0
 {"_date":1789746246305,"Open_vSwitch":{"074c070a-4cbe-45bb-ad1e-9cbe9f8446ab":{"cur_cfg":32}},"_is_diff":true}
+OVSDB JSON 244 4a2f2261015e8e8b30c2ca2abe1da22188aac23b
+{"Port":{"0ff86fce-2117-492c-8230-248ad2944b88":{"tag":20}},"_date":1790129336425,"_is_diff":true,"_comment":"ovs-vsctl (invoked by bash): ovs-vsctl set port eth2 tag=20","Open_vSwitch":{"074c070a-4cbe-45bb-ad1e-9cbe9f8446ab":{"next_cfg":33}}}
+OVSDB JSON 111 0b2de8e68a6b0115c4ecaa923135821872fb92f7
+{"_date":1790129336430,"Open_vSwitch":{"074c070a-4cbe-45bb-ad1e-9cbe9f8446ab":{"cur_cfg":33}},"_is_diff":true}
+OVSDB JSON 244 b91a873c1374ad12328995eb490458f51fe17608
+{"Port":{"40a21b94-8efe-46cc-b033-605ec78ab05d":{"tag":20}},"_date":1790129336438,"_is_diff":true,"_comment":"ovs-vsctl (invoked by bash): ovs-vsctl set port eth3 tag=20","Open_vSwitch":{"074c070a-4cbe-45bb-ad1e-9cbe9f8446ab":{"next_cfg":34}}}
+OVSDB JSON 111 d06d1388615bd836bc3cf5abd696b9877189b18a
+{"_date":1790129336443,"Open_vSwitch":{"074c070a-4cbe-45bb-ad1e-9cbe9f8446ab":{"cur_cfg":34}},"_is_diff":true}
+OVSDB JSON 244 c979e1e296b27a0dd3cd3d544eac45df160ae9f3
+{"Port":{"ef20aafa-e3e2-4941-be0b-b883f683e9de":{"tag":10}},"_date":1790129336450,"_is_diff":true,"_comment":"ovs-vsctl (invoked by bash): ovs-vsctl set port eth4 tag=10","Open_vSwitch":{"074c070a-4cbe-45bb-ad1e-9cbe9f8446ab":{"next_cfg":35}}}
+OVSDB JSON 111 7918581a642225a9a700a150c56723ec25a81bcf
+{"_date":1790129336457,"Open_vSwitch":{"074c070a-4cbe-45bb-ad1e-9cbe9f8446ab":{"cur_cfg":35}},"_is_diff":true}
+OVSDB JSON 244 67258e3ec6a0bbc31458acfd16d20576737db8a4
+{"Port":{"20b2019b-1f00-4a67-90b4-86987a12e4ba":{"tag":10}},"_date":1790129336464,"_is_diff":true,"_comment":"ovs-vsctl (invoked by bash): ovs-vsctl set port eth5 tag=10","Open_vSwitch":{"074c070a-4cbe-45bb-ad1e-9cbe9f8446ab":{"next_cfg":36}}}
+OVSDB JSON 111 b14318813b6060fdf4f29ca85e0d5e83f3a92543
+{"_date":1790129336469,"Open_vSwitch":{"074c070a-4cbe-45bb-ad1e-9cbe9f8446ab":{"cur_cfg":36}},"_is_diff":true}
