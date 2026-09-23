@@ -40,6 +40,13 @@ resource "aws_instance" "web" {
   tags = {
     Name = "${var.project}-web"
   }
+
+  user_data = <<-EOF
+    #!/bin/bash
+    dnf install -y nginx
+    systemctl enable nginx
+    systemctl start nginx
+  EOF
 }
 
 resource "aws_eip" "web" {
