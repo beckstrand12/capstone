@@ -18,9 +18,6 @@
 *.tmp
 *.swp
 
-# GNS3 project temporary folders
-*.gns3project
-
 # Terraform generated files
 Terraform/.terraform/
 Terraform/*.tfstate
