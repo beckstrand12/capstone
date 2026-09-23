@@ -105,7 +105,7 @@ variable "instance_type" {
 variable "root_volume_size" {
   description = "Root EBS volume size (GB) for each instance - 3 instances x this must stay under the lab's 150GB total cap"
   type        = number
-  default     = 20
+  default     = 30
 }
 
 variable "admin_cidr" {

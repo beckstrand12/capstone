@@ -1,5 +1,5 @@
 # SECURITY GROUPS ============================================================
-
+# Web Security Group =======================================
 resource "aws_security_group" "web" {
   name        = "${var.project}-web-sg"
   description = "Public web tier"
@@ -71,7 +71,7 @@ resource "aws_security_group" "web" {
   }
 }
 
-
+# App Security Group =======================================
 resource "aws_security_group" "app" {
   name        = "${var.project}-app-sg"
   description = "Private application tier"
@@ -144,7 +144,7 @@ resource "aws_security_group" "app" {
   }
 }
 
-
+# Data Security Group =======================================
 resource "aws_security_group" "db" {
   name        = "${var.project}-db-sg"
   description = "Private database tier"
@@ -168,11 +168,6 @@ resource "aws_security_group" "db" {
     security_groups = [aws_security_group.app.id]
   }
 
-  # NOTE: "PostgreSQL from on-prem IT" rule removed.
-  # Per spec, Data tier accepts traffic exclusively from the App SG.
-  # Your hybrid routing only advertises IT (10.10.10.0/24) as far as
-  # APP-1 anyway, so on-prem IT was never supposed to reach the DB tier directly.
-
   egress {
     description = "All outbound"
     from_port   = 0
@@ -187,7 +182,6 @@ resource "aws_security_group" "db" {
 }
 
 # WEB NACL ============================================================
-
 resource "aws_network_acl" "web" {
   vpc_id     = data.aws_vpc.main.id
   subnet_ids = [local.web_subnet_id]
@@ -278,7 +272,6 @@ resource "aws_network_acl" "web" {
 
 
 # APP NACL ============================================================
-
 resource "aws_network_acl" "app" {
   vpc_id     = data.aws_vpc.main.id
   subnet_ids = [aws_subnet.app.id]
@@ -359,7 +352,6 @@ resource "aws_network_acl" "app" {
 
 
 # DB NACL ============================================================
-
 resource "aws_network_acl" "db" {
   vpc_id     = data.aws_vpc.main.id
   subnet_ids = [aws_subnet.db.id]
